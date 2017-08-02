@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Core.Models;
 
 namespace Core.Models
 {
@@ -7,9 +6,8 @@ namespace Core.Models
     {
         public string Email { get; set; }
         public string Password { get; set; }
-
-        public ICollection<ProjectEmployee> ProjectEmployees { get; set; }
-
+        public Project Project { get; set; }
+        public int ProjectId { get; set; }
         public List<Task> Tasks { get; set; }
     }
 }

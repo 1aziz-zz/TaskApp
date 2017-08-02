@@ -6,11 +6,9 @@ namespace Core.Models
     public class Project : Entity
     {
         [Required]
-
         public string Title { get; set; }
-        public string Description { get; set; }
-        public List<Task> Tasks { get; set; }
 
-        public ICollection<ProjectEmployee> ProjectEmployees{ get; set; }
+        public string Description { get; set; }
+        public virtual List<Employee> Employees { get; set; }
     }
 }

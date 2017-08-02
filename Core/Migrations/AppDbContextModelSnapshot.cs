@@ -25,7 +25,11 @@ namespace Core.Migrations
 
                     b.Property<string>("Password");
 
+                    b.Property<int>("ProjectId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Employees");
                 });
@@ -45,19 +49,6 @@ namespace Core.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Core.Models.ProjectEmployee", b =>
-                {
-                    b.Property<int>("EmployeeId");
-
-                    b.Property<int>("ProjectId");
-
-                    b.HasKey("EmployeeId", "ProjectId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectEmployee");
-                });
-
             modelBuilder.Entity("Core.Models.Task", b =>
                 {
                     b.Property<int>("Id")
@@ -69,9 +60,7 @@ namespace Core.Migrations
 
                     b.Property<DateTime>("EndTime");
 
-                    b.Property<int>("ProjectId");
-
-                    b.Property<DateTime>("StarTime");
+                    b.Property<DateTime>("StartTime");
 
                     b.Property<string>("Title")
                         .IsRequired();
@@ -80,20 +69,13 @@ namespace Core.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("ProjectId");
-
                     b.ToTable("Tasks");
                 });
 
-            modelBuilder.Entity("Core.Models.ProjectEmployee", b =>
+            modelBuilder.Entity("Core.Models.Employee", b =>
                 {
-                    b.HasOne("Core.Models.Employee", "Employee")
-                        .WithMany("ProjectEmployees")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Core.Models.Project", "Project")
-                        .WithMany("ProjectEmployees")
+                        .WithMany("Employees")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -103,11 +85,6 @@ namespace Core.Migrations
                     b.HasOne("Core.Models.Employee", "Employee")
                         .WithMany("Tasks")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Core.Models.Project", "Project")
-                        .WithMany("Tasks")
-                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
         }

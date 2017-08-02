@@ -10,11 +10,15 @@ namespace Data
         public IEmployeeRepo Employees { get; private set; }
         public ITaskRepo Tasks { get; private set; }
 
+        public IProjectRepo Projects { get; private set; }
+
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
             Employees = new EmployeeRepo(_context);
             Tasks = new TaskRepo(_context);
+            Projects = new ProjectRepo(_context);
+
         }
 
 

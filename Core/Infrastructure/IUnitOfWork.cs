@@ -9,6 +9,7 @@ namespace Core.Infrastructure
         IEmployeeRepo Employees{ get; }
         ITaskRepo Tasks { get; }
 
+        IProjectRepo Projects { get; }
 
         int Complete();
     }
