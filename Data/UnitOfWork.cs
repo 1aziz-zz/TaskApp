@@ -1,6 +1,7 @@
-﻿using Core.Models.Repositories;
+﻿using Core.Infrastructure;
+using Core.Models.Repositories;
 
-namespace Core.Infrastructure
+namespace Data
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -12,8 +13,8 @@ namespace Core.Infrastructure
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
-            Employees = new EmployeeRepo(context);
-            Tasks = new TaskRepo(context);
+            Employees = new EmployeeRepo(_context);
+            Tasks = new TaskRepo(_context);
         }
 
 

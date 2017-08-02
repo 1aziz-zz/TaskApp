@@ -4,39 +4,38 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Core.Infrastructure;
 using Core.Models;
+using Data;
 
 namespace App.Controllers
 {
     public class EmployeeController : Controller
     {
-      
-        private readonly AppDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
 
-        public EmployeeController(AppDbContext context)
+        public EmployeeController(IUnitOfWork unitOfWork)
         {
-            _context = context;
-            _unitOfWork = new UnitOfWork(context);
+            _unitOfWork = unitOfWork;
         }
+
         // GET: Employee
-        public async Task<IActionResult> Index()
+        public ViewResult Index()
         {
-            return View(await _context.Employees.ToListAsync());
+            return View(_unitOfWork.Employees.GetAll());
         }
 
         // GET: Employee/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public ViewResult Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return null;
             }
 
-            var employee = await _context.Employees
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var employee = _unitOfWork.Employees.GetAll()
+                .SingleOrDefault(m => m.Id == id);
             if (employee == null)
             {
-                return NotFound();
+                return null;
             }
 
             return View(employee);
@@ -53,30 +52,22 @@ namespace App.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Email,Password,Id")] Employee employee)
+        public IActionResult Create([Bind("Email,Password,Id")] Employee employee)
         {
             if (ModelState.IsValid)
             {
                 _unitOfWork.Employees.Add(employee);
-                await _context.SaveChangesAsync();
+                _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
             return View(employee);
         }
 
         // GET: Employee/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var employee = _unitOfWork.Employees.GetAll().SingleOrDefault(m => m.Id == id);
 
-            var employee = await _context.Employees.SingleOrDefaultAsync(m => m.Id == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
             return View(employee);
         }
 
@@ -85,7 +76,7 @@ namespace App.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Email,Password,Id")] Employee employee)
+        public IActionResult Edit(int id, [Bind("Email,Password,Id")] Employee employee)
         {
             if (id != employee.Id)
             {
@@ -97,7 +88,7 @@ namespace App.Controllers
                 try
                 {
                     _unitOfWork.Employees.Update(employee);
-                    await _context.SaveChangesAsync();
+                    _unitOfWork.Complete();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,8 +114,8 @@ namespace App.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var employee = _unitOfWork.Employees.GetAll()
+                .SingleOrDefault(m => m.Id == id);
             if (employee == null)
             {
                 return NotFound();
@@ -136,11 +127,11 @@ namespace App.Controllers
         // POST: Employee/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var employee = await _context.Employees.SingleOrDefaultAsync(m => m.Id == id);
+            var employee = _unitOfWork.Employees.GetAll().SingleOrDefault(m => m.Id == id);
             _unitOfWork.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Complete();
             return RedirectToAction("Index");
         }
 
